@@ -11,6 +11,7 @@ import pygame
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
 from pygame.locals import (
+    RLEACCEL,
     K_UP,
     K_DOWN,
     K_LEFT,
@@ -28,8 +29,8 @@ SCREEN_HEIGHT = 600
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.Surface((75, 25))
-        self.surf.fill((255, 255, 255))
+        self.surf = pygame.image.load("jet.png").convert()
+        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
     def update(self,pressed_keys):
         if pressed_keys[K_UP]:  
@@ -52,8 +53,8 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.Surface((20,10))
-        self.surf.fill((255,255,255))
+        self.surf = pygame.image.load("missile.png").convert()
+        self.surf.set_colorkey((255,255,255), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
                   random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), random.randint(0,SCREEN_HEIGHT)  
@@ -71,7 +72,7 @@ ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 250)
 
 player = Player()
-
+enemy = Enemy()
 enemies = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
@@ -86,13 +87,22 @@ while running:
                 running = False
         elif event.type == QUIT:
             running = False
-        pressed_keys = pygame.key.get_pressed()
-        player.update(pressed_keys)
-
+        elif event.type == ADDENEMY:
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            all_sprites.add(new_enemy)
+    pressed_keys = pygame.key.get_pressed()
+    player.update(pressed_keys) 
+    enemies.update()     
+        
     screen.fill((0, 0, 0))
     
     for entity in all_sprites:
-        screen.blit(entity.surf, entity.rect)
+            screen.blit(entity.surf, entity.rect)
+    if pygame.sprite.spritecollideany(player, enemies):
+        player.kill()
+        running = False
+    
 
     pygame.display.flip()
 
