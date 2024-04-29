@@ -8,6 +8,8 @@ Created on Mon Apr  8 09:02:33 2024
 # Import the pygame module
 import pygame
 
+import random
+
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
 from pygame.locals import (
@@ -20,28 +22,27 @@ from pygame.locals import (
     KEYDOWN,
     QUIT,
 )
-import random
-
+     
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load("jet.png").convert()
+        self.surf = pygame.image.load("myjet.png").convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        #self.surf = pygame.Surface((75, 25))
+        #self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect()
     def update(self,pressed_keys):
         if pressed_keys[K_UP]:  
-            self.rect.move_ip(0,-5)
-            print(self.rect.x, self.rect.y)
+            self.rect.move_ip(0,-10)
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0,5)
+            self.rect.move_ip(0,10)
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(5,0)
+            self.rect.move_ip(10,0)
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-5,0)
+            self.rect.move_ip(-10,0)
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -50,6 +51,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+            
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
@@ -59,17 +61,27 @@ class Enemy(pygame.sprite.Sprite):
             center=(
                   random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), random.randint(0,SCREEN_HEIGHT)  
                 )
-            )  
-        self.speed = random.randint(5,20)
+            )
+        self.speed = random.randint(5,35)
     def update(self):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
-pygame.init()
+            
+def player_score():
+    player.score +=1
+    
+
+pygame.init()       
+
+myFont = pygame.font.SysFont("verdana", 35)
+
+white = (0,0,0)
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, 250)
+pygame.time.set_timer(ADDENEMY, 300)
 
 player = Player()
 enemy = Enemy()
@@ -79,6 +91,10 @@ all_sprites.add(player)
 
 running = True
 
+clock = pygame.time.Clock()
+
+    
+pygame.time.set_timer(player_score,100)
 
 while running:  
     for event in pygame.event.get():
@@ -93,7 +109,11 @@ while running:
             all_sprites.add(new_enemy)
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys) 
-    enemies.update()     
+    enemies.update()
+    text = "Score:" + str(player_score)
+    label = myFont.render(text, 1, white)
+    screen.blit(label, (600, 250))
+      
         
     screen.fill((0, 0, 0))
     
@@ -105,5 +125,7 @@ while running:
     
 
     pygame.display.flip()
+    clock.tick(30)
 
 pygame.quit()
+    
