@@ -26,6 +26,7 @@ from pygame.locals import (
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+total_time = 15
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
@@ -62,21 +63,20 @@ class Enemy(pygame.sprite.Sprite):
                   random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), random.randint(0,SCREEN_HEIGHT)  
                 )
             )
-        self.speed = random.randint(5,35)
+        self.speed = total_time
     def update(self):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
-            
-def player_score():
-    player.score +=1
+player_score = 0           
+
     
 
 pygame.init()       
 
-myFont = pygame.font.SysFont("verdana", 35)
+myfont = pygame.font.SysFont("monospace", 15)
 
-white = (0,0,0)
+white = (255,255,255)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -93,8 +93,10 @@ running = True
 
 clock = pygame.time.Clock()
 
-    
-pygame.time.set_timer(player_score,100)
+timer_interval = 1000 # 1 seconds
+timer_event = pygame.USEREVENT + 2
+pygame.time.set_timer(timer_event, timer_interval)    
+
 
 while running:  
     for event in pygame.event.get():
@@ -107,15 +109,20 @@ while running:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
+        elif event.type == timer_event:
+             player_score += 1
+             total_time +=1
+        
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys) 
     enemies.update()
     text = "Score:" + str(player_score)
-    label = myFont.render(text, 1, white)
-    screen.blit(label, (600, 250))
+    label = myfont.render(text, 1, white)
+    
       
         
     screen.fill((0, 0, 0))
+    screen.blit(label, (675, 15))
     
     for entity in all_sprites:
             screen.blit(entity.surf, entity.rect)
