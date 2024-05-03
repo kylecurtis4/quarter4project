@@ -27,7 +27,9 @@ from pygame.locals import (
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-total_time = 15
+total_time = 0
+speed = 15
+spawn_rate = 500
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
@@ -64,14 +66,14 @@ class Enemy(pygame.sprite.Sprite):
                   random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100), random.randint(0,SCREEN_HEIGHT)  
                 )
             )
-        self.speed = total_time
+        self.speed = speed
     def update(self):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
 player_score = 0           
 
-    
+high_score = 0  
 
 pygame.init()       
 
@@ -83,7 +85,7 @@ white = (255,255,255)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Spawns Enemies
 ADDENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(ADDENEMY, (1000 - (total_time * 2)))
+pygame.time.set_timer(ADDENEMY, (spawn_rate))
 
 player = Player()
 enemy = Enemy()
@@ -94,7 +96,7 @@ all_sprites.add(player)
 
 clock = pygame.time.Clock()
 # Sets a timer for updating score and total time
-timer_interval = 100
+timer_interval = 10
 timer_event = pygame.USEREVENT + 2
 pygame.time.set_timer(timer_event, timer_interval)    
 
@@ -125,8 +127,11 @@ while running:
             all_sprites.add(new_enemy)
         elif event.type == timer_event:
              player_score += 1
-             total_time +=0.1
-        
+             total_time +=0.01
+             if speed <= 30:
+                 speed += 0.1
+             if spawn_rate > 0:
+                 spawn_rate - (total_time *2)
          
     if alive: 
         # Updates Player and Enemies
@@ -137,7 +142,7 @@ while running:
         text = "Score:" + str(player_score)
         label = myfont.render(text, 1, white)    
             
-        screen.fill((0, 0, 0))
+        screen.fill((16, 36, 119))
         screen.blit(label, (675, 15))
         
     
@@ -147,14 +152,23 @@ while running:
         # Collisions 
         if pygame.sprite.spritecollideany(player, enemies):
             player.kill()
+            if player_score > high_score:
+                high_score = player_score
             game_over = "Game Over"
             game_over_label = gameoverfont.render(game_over, 1 , white)
             restart = "Space to Restart"
-            restart_label = myfont.render(restart, 1, white)
+            restart_label = myfont.render(restart, 1 , white)
+            score = "Your score: " + str(player_score)
+            score_label = myfont.render(score, 1 , white)
+            high_score_text = "High Score: " + str(high_score)
+            high_score_label = myfont.render(high_score_text, 1 , white)
             screen.fill((0,0,255))
-            screen.blit(game_over_label,((SCREEN_WIDTH/2),(SCREEN_HEIGHT/2)))
-            screen.blit(restart_label, (325, 300))
+            screen.blit(game_over_label,((SCREEN_WIDTH/2) -  75,(SCREEN_HEIGHT/2) - 50))
+            screen.blit(restart_label, (345, 300))
+            screen.blit(score_label, (350,325))
+            screen.blit(high_score_label, (350,345))
             alive = False 
+            
     
         
     
