@@ -81,6 +81,7 @@ myfont = pygame.font.SysFont("monospace", 15)
 gameoverfont = pygame.font.SysFont("Arial", 35, bold = True, )
 
 white = (255,255,255)
+red = (255,0,0)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Spawns Enemies
@@ -155,14 +156,14 @@ while running:
             if player_score > high_score:
                 high_score = player_score
             game_over = "Game Over"
-            game_over_label = gameoverfont.render(game_over, 1 , white)
+            game_over_label = gameoverfont.render(game_over, 1 , red)
             restart = "Space to Restart"
             restart_label = myfont.render(restart, 1 , white)
             score = "Your score: " + str(player_score)
             score_label = myfont.render(score, 1 , white)
             high_score_text = "High Score: " + str(high_score)
             high_score_label = myfont.render(high_score_text, 1 , white)
-            screen.fill((0,0,255))
+            screen.fill((0,0,0))
             screen.blit(game_over_label,((SCREEN_WIDTH/2) -  75,(SCREEN_HEIGHT/2) - 50))
             screen.blit(restart_label, (345, 300))
             screen.blit(score_label, (350,325))
