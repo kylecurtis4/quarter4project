@@ -71,6 +71,22 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
+class BombEnemy(pygame.sprite.Sprite):
+    def __init__(self):
+        super(BombEnemy, self).__init__()
+        self.surf = pygame.image.load("mybomb.png").convert()
+        self.surf.set_colorkey((255,255,255), RLEACCEL)
+        self.rect = self.surf.get_rect(
+            center = (
+                random.randint(0,SCREEN_WIDTH), random.randint(0,SCREEN_HEIGHT)
+                
+                )
+            )
+        self.speed = 10
+        def update(self):
+            self.rect.move_ip(0, -self.speed)
+            if self.rect.down < 0:
+                self.kill()
 player_score = 0           
 
 high_score = 0  
@@ -87,6 +103,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # Spawns Enemies
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, (spawn_rate))
+ADDBOMBENEMY = pygame.USEREVENT + 3
+pygame.time.set_timer(ADDBOMBENEMY, 1000)
+
 
 player = Player()
 enemy = Enemy()
@@ -133,6 +152,11 @@ while running:
                  speed += 0.1
              if spawn_rate > 0:
                  spawn_rate - (total_time *2)
+        elif event.type == ADDBOMBENEMY:
+            if player_score > 1000:
+                new_bombenemy = BombEnemy()
+                enemies.add(new_bombenemy)
+                all_sprites.add(new_bombenemy)
          
     if alive: 
         # Updates Player and Enemies
