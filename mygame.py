@@ -78,15 +78,16 @@ class BombEnemy(pygame.sprite.Sprite):
         self.surf.set_colorkey((255,255,255), RLEACCEL)
         self.rect = self.surf.get_rect(
             center = (
-                random.randint(0,SCREEN_WIDTH), random.randint(0,SCREEN_HEIGHT)
+                
+                random.randint(0,SCREEN_WIDTH), 0
                 
                 )
             )
         self.speed = 10
-        def update(self):
-            self.rect.move_ip(0, -self.speed)
-            if self.rect.down < 0:
-                self.kill()
+    def update(self):
+            self.rect.move_ip(0, self.speed)
+            #if self.rect.down < 0:
+                #self.kill()
 player_score = 0           
 
 high_score = 0  
@@ -104,7 +105,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, (spawn_rate))
 ADDBOMBENEMY = pygame.USEREVENT + 3
-pygame.time.set_timer(ADDBOMBENEMY, 1000)
+pygame.time.set_timer(ADDBOMBENEMY, (3000 - total_time))
 
 
 player = Player()
