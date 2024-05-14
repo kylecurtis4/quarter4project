@@ -92,6 +92,8 @@ player_score = 0
 
 high_score = 0  
 
+level = 1
+
 pygame.init()       
 
 myfont = pygame.font.SysFont("monospace", 15)
@@ -153,11 +155,17 @@ while running:
                  speed += 0.1
              if spawn_rate > 0:
                  spawn_rate - (total_time *2)
+             if player_score > 1000:
+                 level = 2
+            
         elif event.type == ADDBOMBENEMY:
-            if player_score > 1000:
+            if level >= 2:
                 new_bombenemy = BombEnemy()
                 enemies.add(new_bombenemy)
                 all_sprites.add(new_bombenemy)
+        
+            
+            
          
     if alive: 
         # Updates Player and Enemies
@@ -165,11 +173,19 @@ while running:
         player.update(pressed_keys) 
         enemies.update()
         # Draws the score 
+        
+        if level == 1:
+            screen.fill((16, 36, 119))
+        if level == 2:
+            screen.fill((16,180,36))
+            if player_score > 1000 and player_score < 1100:
+                lvl2txt = "Level 2"
+                lvl2txtlabel = myfont.render(lvl2txt, 1 , white)
+                screen.blit(lvl2txtlabel, ((SCREEN_WIDTH/2) - 75, (SCREEN_HEIGHT/2) - 50))
         text = "Score:" + str(player_score)
         label = myfont.render(text, 1, white)    
+        screen.blit(label, (675, 15)) 
             
-        screen.fill((16, 36, 119))
-        screen.blit(label, (675, 15))
         
     
         # Draws the enemies 
@@ -178,6 +194,7 @@ while running:
         # Collisions 
         if pygame.sprite.spritecollideany(player, enemies):
             player.kill()
+            level = 1
             if player_score > high_score:
                 high_score = player_score
             game_over = "Game Over"
