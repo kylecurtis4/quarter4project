@@ -59,7 +59,10 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.image.load("mymissile.png").convert()
+        if level < 3:
+            self.surf = pygame.image.load("mymissile.png").convert()
+        elif level >= 3:
+            self.surf = pygame.image.load("mymissile2.png").convert()
         self.surf.set_colorkey((255,255,255), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
@@ -155,8 +158,10 @@ while running:
                  speed += 0.1
              if spawn_rate > 0:
                  spawn_rate - (total_time *2)
-             if player_score > 1000:
+             if player_score > 1500:
                  level = 2
+             if player_score > 3000:
+                 level = 3
             
         elif event.type == ADDBOMBENEMY:
             if level >= 2:
@@ -178,10 +183,16 @@ while running:
             screen.fill((16, 36, 119))
         if level == 2:
             screen.fill((16,180,36))
-            if player_score > 1000 and player_score < 1100:
+            if player_score > 1500 and player_score < 1700:
                 lvl2txt = "Level 2"
                 lvl2txtlabel = myfont.render(lvl2txt, 1 , white)
-                screen.blit(lvl2txtlabel, ((SCREEN_WIDTH/2) - 75, (SCREEN_HEIGHT/2) - 50))
+                screen.blit(lvl2txtlabel, ((SCREEN_WIDTH/2) - 50, (SCREEN_HEIGHT/2) - 50))
+        if level == 3:
+            screen.fill((120,180,36))
+            if player_score > 3000 and player_score < 3200:
+                lvl3txt = "Level 3"
+                lvl3txtlabel = myfont.render(lvl3txt, 1 , white)
+                screen.blit(lvl3txtlabel, ((SCREEN_WIDTH/2) - 50, (SCREEN_HEIGHT/2) - 50))
         text = "Score:" + str(player_score)
         label = myfont.render(text, 1, white)    
         screen.blit(label, (675, 15)) 
