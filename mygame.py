@@ -91,6 +91,22 @@ class BombEnemy(pygame.sprite.Sprite):
             self.rect.move_ip(0, self.speed)
             #if self.rect.down < 0:
                 #self.kill()
+class Cloud(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Cloud, self).__init__()
+        self.surf = pygame.image.load("mystar.png").convert()
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        # The starting position is randomly generated
+        self.rect = self.surf.get_rect(
+            center=(
+                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(0, SCREEN_HEIGHT),
+            )
+        )
+    def update(self):
+        self.rect.move_ip(-5, 0)
+        if self.rect.right < 0:
+            self.kill()
 player_score = 0           
 
 high_score = 0  
@@ -111,11 +127,15 @@ ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, (spawn_rate))
 ADDBOMBENEMY = pygame.USEREVENT + 3
 pygame.time.set_timer(ADDBOMBENEMY, (3000 - total_time))
+ADDCLOUD = pygame.USEREVENT + 4
+pygame.time.set_timer(ADDCLOUD, 1000)
 
 
 player = Player()
 enemy = Enemy()
+cloud = Cloud()
 enemies = pygame.sprite.Group()
+clouds = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
@@ -151,6 +171,11 @@ while running:
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
+        elif event.type == ADDCLOUD:
+            # Create the new cloud and add it to sprite groups
+            new_cloud = Cloud()
+            clouds.add(new_cloud)
+            all_sprites.add(new_cloud)
         elif event.type == timer_event:
              player_score += 1
              total_time +=0.01
@@ -177,6 +202,7 @@ while running:
         pressed_keys = pygame.key.get_pressed()
         player.update(pressed_keys) 
         enemies.update()
+        clouds.update()
         # Draws the score 
         
         if level == 1:
