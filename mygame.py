@@ -21,9 +21,11 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     K_SPACE,
+    K_1,
+    K_2,
     QUIT,
 )
-     
+player_skin = "myjet.png"
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
@@ -33,7 +35,7 @@ spawn_rate = 500
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.image.load("myjet.png").convert()
+        self.surf = pygame.image.load(player_skin).convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         #self.surf = pygame.Surface((75, 25))
         #self.surf.fill((255, 255, 255))
@@ -74,6 +76,8 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.move_ip(-self.speed, 0)
         if self.rect.right < 0:
             self.kill()
+        if player_score == 1500:
+            self.kill()
 class BombEnemy(pygame.sprite.Sprite):
     def __init__(self):
         super(BombEnemy, self).__init__()
@@ -94,7 +98,12 @@ class BombEnemy(pygame.sprite.Sprite):
 class Cloud(pygame.sprite.Sprite):
     def __init__(self):
         super(Cloud, self).__init__()
-        self.surf = pygame.image.load("mystar.png").convert()
+        if level == 1:
+            self.surf = pygame.image.load("mystar.png").convert()
+        if level == 2: 
+            self.surf = pygame.image.load("mystar1.png").convert()
+        if level == 3:
+            self.surf = pygame.image.load("mystar2.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         # The starting position is randomly generated
         self.rect = self.surf.get_rect(
@@ -147,7 +156,8 @@ timer_event = pygame.USEREVENT + 2
 pygame.time.set_timer(timer_event, timer_interval)    
 
 running = True
-alive = True 
+alive = True
+start = False
 while running:  
     
     # Process events 
@@ -165,6 +175,14 @@ while running:
                 alive = True
                 player_score = 0 
                 total_time = 15 
+            elif event.key == K_1 and not alive:
+                player_skin = "myjet.png"
+                alive = True
+                start = True
+            elif event.key == K_2 and not alive:
+                player.skin = "myjet2.png"
+                alive = True
+                start = True
         elif event.type == QUIT:
             running = False
         elif event.type == ADDENEMY:
@@ -214,7 +232,7 @@ while running:
                 lvl2txtlabel = myfont.render(lvl2txt, 1 , white)
                 screen.blit(lvl2txtlabel, ((SCREEN_WIDTH/2) - 50, (SCREEN_HEIGHT/2) - 50))
         if level == 3:
-            screen.fill((120,180,36))
+            screen.fill((255,180,36))
             if player_score > 3000 and player_score < 3200:
                 lvl3txt = "Level 3"
                 lvl3txtlabel = myfont.render(lvl3txt, 1 , white)
@@ -232,6 +250,7 @@ while running:
         if pygame.sprite.spritecollideany(player, enemies):
             player.kill()
             level = 1
+            print ("updating level to 1")
             if player_score > high_score:
                 high_score = player_score
             game_over = "Game Over"
