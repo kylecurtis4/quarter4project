@@ -116,6 +116,10 @@ class Cloud(pygame.sprite.Sprite):
         self.rect.move_ip(-5, 0)
         if self.rect.right < 0:
             self.kill()
+        if player_score > 1500 and player_score < 1502:
+            self.kill()
+        if player_score > 3000 and player_score < 3002:
+            self.kill()
 player_score = 0           
 
 high_score = 0  
@@ -180,7 +184,7 @@ while running:
                 alive = True
                 start = True
             elif event.key == K_2 and not alive:
-                player.skin = "myjet2.png"
+                player.skin = "myjet1.png"
                 alive = True
                 start = True
         elif event.type == QUIT:
@@ -223,15 +227,16 @@ while running:
         clouds.update()
         # Draws the score 
         
+        #print(level) 
         if level == 1:
             screen.fill((16, 36, 119))
-        if level == 2:
+        elif level == 2:
             screen.fill((16,180,36))
             if player_score > 1500 and player_score < 1700:
                 lvl2txt = "Level 2"
                 lvl2txtlabel = myfont.render(lvl2txt, 1 , white)
                 screen.blit(lvl2txtlabel, ((SCREEN_WIDTH/2) - 50, (SCREEN_HEIGHT/2) - 50))
-        if level == 3:
+        elif level == 3:
             screen.fill((255,180,36))
             if player_score > 3000 and player_score < 3200:
                 lvl3txt = "Level 3"
@@ -250,7 +255,6 @@ while running:
         if pygame.sprite.spritecollideany(player, enemies):
             player.kill()
             level = 1
-            print ("updating level to 1")
             if player_score > high_score:
                 high_score = player_score
             game_over = "Game Over"
@@ -266,6 +270,7 @@ while running:
             screen.blit(restart_label, (345, 300))
             screen.blit(score_label, (350,325))
             screen.blit(high_score_label, (350,345))
+            player_score = 0
             alive = False 
             
     
