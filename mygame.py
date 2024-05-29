@@ -23,6 +23,7 @@ from pygame.locals import (
     K_SPACE,
     K_1,
     K_2,
+    K_3, 
     QUIT,
 )
 player_skin = "myjet.png"
@@ -160,15 +161,33 @@ timer_event = pygame.USEREVENT + 2
 pygame.time.set_timer(timer_event, timer_interval)    
 
 running = True
-alive = True
-start = False
-while running:  
+alive = False
+started = False
+
+screen.fill((16,36,119))
+pygame.display.flip() 
+
+while not started:
+
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+            if event.key == K_1:
+                player_skin = "myjet.png"
+                alive = True
+                started = True
+            elif event.key == K_2:
+                player.skin = "myjet1.png"
+                alive = True
+                start = True
+        
+while started and running:  
     
     # Process events 
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 running = False
+                started = False
             elif event.key == K_SPACE and not alive:
                 # RESTART the game
                 player = Player()
@@ -179,16 +198,11 @@ while running:
                 alive = True
                 player_score = 0 
                 total_time = 15 
-            elif event.key == K_1 and not alive:
-                player_skin = "myjet.png"
-                alive = True
-                start = True
-            elif event.key == K_2 and not alive:
-                player.skin = "myjet1.png"
-                alive = True
-                start = True
+            
+
         elif event.type == QUIT:
             running = False
+            started = False
         elif event.type == ADDENEMY:
             new_enemy = Enemy()
             enemies.add(new_enemy)
